@@ -1,0 +1,16 @@
+CLASS zcl_comp_graphics_enum DEFINITION
+  PUBLIC
+  FINAL
+  CREATE PUBLIC .
+
+  PUBLIC SECTION.
+   CONSTANTS line type C VALUE 'L'.
+   CONSTANTS ellipse type C VALUE 'E'.
+  PROTECTED SECTION.
+  PRIVATE SECTION.
+ENDCLASS.
+
+
+
+CLASS zcl_comp_graphics_enum IMPLEMENTATION.
+ENDCLASS.
