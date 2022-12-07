@@ -6,12 +6,23 @@ CLASS zcl_bracket_string DEFINITION
   PUBLIC SECTION.
 
     INTERFACES zif_string_demo .
+    METHODS constructor.
   PROTECTED SECTION.
   PRIVATE SECTION.
+    CONSTANTS opening_curly_bracket TYPE C VALUE '{'.
+    CONSTANTS opening_square_bracket TYPE C VALUE '['.
+    CONSTANTS opening_round_bracket TYPE C VALUE '('.
+    CONSTANTS closing_curly_bracket TYPE C VALUE '}'.
+    CONSTANTS closing_square_bracket TYPE C VALUE ']'.
+    CONSTANTS closing_round_bracket TYPE C VALUE ')'.
+
+    DATA char_stack TYPE REF TO zif_demo_stack.
+
     METHODS bracket_check
             IMPORTING opening_bracket TYPE C
                       closing_bracket TYPE C
             RETURNING VALUE(bracket_closed) TYPE abap_bool.
+
 
 ENDCLASS.
 
@@ -25,13 +36,13 @@ CLASS zcl_bracket_string IMPLEMENTATION.
     DATA stack_poped_char TYPE C.
     DATA char_at_index TYPE C.
     DATA(str_len) = strlen( string_with_brackets ).
-    DATA(char_stack) = CAST zif_demo_stack( NEW zcl_demo_stack( ) ).
+
     WHILE ( index < str_len ).
        char_at_index = string_with_brackets+index(1).
         CASE char_at_index.
-            WHEN '{' OR '[' OR '('.
+            WHEN opening_curly_bracket OR opening_square_bracket OR opening_round_bracket.
                 char_stack->push( char_at_index ).
-            WHEN '}' OR ']' OR ')'.
+            WHEN closing_curly_bracket OR closing_square_bracket OR closing_round_bracket..
                char_stack->pop( IMPORTING
                                     element = stack_poped_char ).
                is_closed = bracket_check( opening_bracket = stack_poped_char
@@ -46,14 +57,21 @@ CLASS zcl_bracket_string IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD bracket_check.
-      bracket_closed = COND #( WHEN  opening_bracket EQ '{' AND closing_bracket EQ '}'
+      bracket_closed = COND #( WHEN  opening_bracket EQ opening_curly_bracket AND
+                                     closing_bracket EQ closing_curly_bracket
                                  THEN abap_true
-                                WHEN  opening_bracket EQ '[' AND closing_bracket EQ ']'
+                                WHEN  opening_bracket EQ opening_square_bracket AND
+                                      closing_bracket EQ closing_square_bracket
                                  THEN abap_true
-                                WHEN  opening_bracket EQ '(' AND closing_bracket EQ ')'
+                                WHEN  opening_bracket EQ opening_round_bracket AND
+                                      closing_bracket EQ closing_round_bracket
                                  THEN abap_true
                                 ELSE abap_false
                                ).
+  ENDMETHOD.
+
+  METHOD constructor.
+     char_stack = NEW zcl_demo_stack( ).
   ENDMETHOD.
 
 ENDCLASS.
